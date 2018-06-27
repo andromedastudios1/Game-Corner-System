@@ -1,54 +1,33 @@
-const Discord = require('discord.js');
+const Discord = require('discord.js')
 const client = new Discord.Client({
   commandPrefix: 'GCS'
-});
-const http = require('http');
-const https = require('https');
-const port = process.env.PORT;
+})
+const http = require('http')
+const https = require('https')
+const port = process.env.PORT
+const Leave_Join_MSG = require('Leave_Join_MSG.js')
 
-
-// Server keeps the bot up with Uptime Robot pinging it
-const requestHandler = (request, response) => {
-  console.log(request.url);
-  response.end('server requested');
-}
-
-const server = http.createServer(requestHandler);
+const server = http.createServer(requestHandler)
 
 server.listen(port, (err) => {
   if (err) {
     return console.log('something bad happened', err)
   }
-  console.log(`server is listening on ${port}`);
-});
+  console.log(`server is listening on ${port}`)
+})
 
 
 // When discord.js client is ready
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-});
-
-client.on('guildMemberRemove', member => {
-  member.createDM()
-    .then(DMchannel => {
-      DMchannel.send('Hey there, we\'d like to know why you left Game Corner so that future members have a better experience. Please type out your response in a message below. Thanks!');
-      const filter = m => m.author.id === member.id;
-      DMchannel.awaitMessages(filter, { max: 1, time: 86400000, errors: ['time'] })
-        .then(collected => {
-          client.fetchUser('240550416129982464')
-            .then(user => {
-              user.send(`Forner member ${member.displayName} left Game Corner and said: ${collected.values().next().value.toString()}`);
-            });
-        });
-    });
-});
+  console.log(`Logged in as ${client.user.tag}`)
+})
 
 // When client receives a message
 client.on('message', msg => {
   var msgMatch = msg.content.match(/\([^()]*\)|[^.]+(?=\([^()]*\))|[^.]+/g);
-  var username;
-  var method;
-  var value;
+  var username
+  var method
+  var value
   if (msgMatch[0] === 'API') {
     if (msgMatch[1] === 'summoner') {
       if (msgMatch.length === 3 || msgMatch.length === 4) {
@@ -114,28 +93,28 @@ client.on('message', msg => {
                 }
               });
             }).on('error', (e) => {
-              console.error(e);
+              console.error(e)
             });
           }
           else {
-            msg.reply('Usernames can only contain letters and numbers.');
+            msg.reply('Usernames can only contain letters and numbers.')
           }
         }
         else {
-          msg.reply('Please provid the username as a parameter of \`summoner\` for the summoner.');
+          msg.reply('Please provid the username as a parameter of \`summoner\` for the summoner.')
         }
       }
       else if (msgMatch.length > 4) {
-        msg.reply('There are no other parameters of those of \`summoner\`\'s.');
+        msg.reply('There are no other parameters of those of \`summoner\`\'s.')
       }
       else {
-        msg.reply('Please provid a username as a parameter of \`summoner\` for the summoner.');
+        msg.reply('Please provid a username as a parameter of \`summoner\` for the summoner.')
       }
     }
     else {
-      msg.reply('Please provid a valid property of \`API\`. The only current property is \`summoner\`.');
+      msg.reply('Please provid a valid property of \`API\`. The only current property is \`summoner\`.')
     }
   }
 });
 
-client.login(process.env.token);
+client.login(process.env.token)
