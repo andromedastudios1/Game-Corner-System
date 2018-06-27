@@ -24,16 +24,16 @@ client.on('ready', () => {
 
 // When client receives a message
 client.on('message', msg => {
-  var msgMatch = msg.content.match(/\([^()]*\)|[^.]+(?=\([^()]*\))|[^.]+/g);
-  var username
-  var method
-  var value
+  const msgMatch = msg.content.match(/\([^()]*\)|[^.]+(?=\([^()]*\))|[^.]+/g);
+  let username
+  let method
+  let value
   if (msgMatch[0] === 'API') {
     if (msgMatch[1] === 'summoner') {
       if (msgMatch.length === 3 || msgMatch.length === 4) {
         if (msgMatch[2].startsWith('(') && msgMatch[2].endsWith(')')) {
-          var userMatch = msgMatch[2];
-          var username = userMatch.slice(1, -1);
+          let userMatch = msgMatch[2];
+          let username = userMatch.slice(1, -1);
           if (username.match('^[A-z0-9 ]+$')) {
             value = 3;
             https.get('https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/' + username + '?api_key=' + process.env.apikey, (res) => {
@@ -41,17 +41,17 @@ client.on('message', msg => {
                 console.log('Riot API statusCode: ' + res.statusCode);
                 switch (res.statusCode) {
                   case 400:
-                    msg.reply('Something went wrong with the request! Please try again.');
+                    console.log('ERROR: Something went wrong with the request! Please try again.');
                     break;
                   case 401:
                   case 403:
-                    msg.reply('The developer of GC-System is not authorized to use the Riot API. Please contact them for furthur details.');
+                    console.log'ERROR: UNAUTHORIZED TO USE RIOT API')
                     break;
                   case 404:
                     msg.reply('The username ' + username + ' is not found in NA1');
                     break;
                   case 405:
-                    msg.reply('The method connection is not allowed. Please contact the bot developer.');
+                    console.log('ERROR: Method of connection is not allowed.');
                     break;
                   case 415:
                     msg.reply('The username text is not supported.');
@@ -75,8 +75,7 @@ client.on('message', msg => {
                     msg.reply('The response took too long. Please contact the developer of the bot.');
                     break;
                   case 200:
-                    var response = JSON.parse(d);
-                    var userResponse = JSON.stringify(response);
+                    var userResponse = JSON.stringify(JSON.parse(d));
                     if (msgMatch.length === 4) {
                       method = msgMatch[3];
                       var methodResponse = response[method];
@@ -84,11 +83,11 @@ client.on('message', msg => {
                         msg.reply('The ' + method + ' of ' + username + ' is ' + methodResponse);
                       }
                       else {
-                        msg.reply('This is not a valid property. You can find all of the properties at: <https://developer.riotgames.com/api-methods/#summoner-v3/GET_getBySummonerName>');
+                        msg.reply('This is not a valid property. You can find all of the properties at: <https://developer.riotgames.com/api-methods/#summoner-v3/GET_getBySummonerName>')
                       }
                     }
                     else {
-                      msg.reply('The data for ' + username + ' is ' + userResponse);
+                      msg.reply('The data for ' + username + ' is ' + userResponse)
                     }
                 }
               });
